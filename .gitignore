@@ -45,3 +45,5 @@ _deps
 
 # Build files
 build/
+.vs/
+CMakeSettings.json
