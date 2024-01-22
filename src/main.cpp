@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <filesystem>
+#include <iostream> 
 #include "Version.hpp"
 
 static void modifyCurrentWorkingDirectory();
@@ -23,14 +24,17 @@ int main()
     sf::Font font;
     if (!font.loadFromFile("resources/OpenSans-Regular.ttf"))
     {
-        return EXIT_FAILURE;
+        
+        std::cerr << "Failed to load font. Application will continue without displaying text.\n";
     }
-
-    sf::Text text("Hello SFML", font, 24);
-    text.setFillColor(sf::Color::White);
-    sf::FloatRect textRect = text.getLocalBounds();
-    text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-    text.setPosition(sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 2.0f));
+    else
+    {
+        sf::Text text("Hello SFML", font, 24);
+        text.setFillColor(sf::Color::White);
+        sf::FloatRect textRect = text.getLocalBounds();
+        text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+        text.setPosition(sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 2.0f));
+    }
 
     while (window.isOpen())
     {
@@ -45,12 +49,16 @@ int main()
 
         window.clear();
         window.draw(sprite);
-        window.draw(text);
+        if (font.loadFromFile("resources/OpenSans-Regular.ttf"))
+        {
+            window.draw(text);
+        }
         window.display();
     }
 
     return 0;
 }
+
 void modifyCurrentWorkingDirectory()
 {
     while (!std::filesystem::exists("resources")) 
