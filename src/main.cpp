@@ -9,7 +9,7 @@ int main()
 {
     modifyCurrentWorkingDirectory();
     auto title = "Template-" + GetTemplateVersion() + "/SFML-" + GetSFMLVersion();
-    sf::RenderWindow window(sf::VideoMode(800, 600), title, sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(640, 360), title, sf::Style::Close);
 
     sf::Texture texture;
     sf::Sprite sprite;
