@@ -47,13 +47,13 @@ int main()
                 window.close();
             }
         }
-
+        
         window.clear();
         window.draw(sprite);
         window.draw(text);
         window.display();
     }
-
+    
     return 0;
 }
 
