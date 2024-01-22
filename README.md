@@ -73,3 +73,11 @@ Note: If you've already cloned this repo without using `--recursive` flag, just 
     ```
 
 - You should find the executables under `build/bin`
+
+## License
+
+This project is released under MIT license. See [LICENSE.md](LICENSE.md) for details. Note that this does not cover any of the submodules located under [vendor](vendors/) and assets located under [resources](resources/).
+
+- [sfml](vendors/sfml/) is covered under [Zlib](vendors/sfml/license.md) license.
+
+- [FiraCode-Regular.ttf](resourcs/FiraCode-Regular.ttf) is covered under [OFL-1.1](https://github.com/tonsky/FiraCode/blob/master/LICENSE) license.
