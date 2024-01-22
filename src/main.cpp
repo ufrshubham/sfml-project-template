@@ -13,7 +13,8 @@ int main()
 
     sf::Texture texture;
     sf::Sprite sprite;
-
+    sf::Text text;
+    
     if (texture.loadFromFile("resources/sfml-project-template.png"))
     {
         sprite.setTexture(texture);
@@ -26,13 +27,14 @@ int main()
     {
         std::cerr << "Failed to load font. Application will continue without displaying text.\n";
     }
-    else
-    {
-        sf::Text text("Hello SFML", font, 24);
+    else {
+        text.setFont(font);
+        text.setString("Hello SFML");
+        text.setCharacterSize(24);
         text.setFillColor(sf::Color::White);
         sf::FloatRect textRect = text.getLocalBounds();
         text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-        text.setPosition(sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 2.0f));
+        text.setPosition(sf::Vector2f(400.0f, 20.0f));
     }
 
     while (window.isOpen())
@@ -48,10 +50,7 @@ int main()
 
         window.clear();
         window.draw(sprite);
-        if (font.loadFromFile("resources/OpenSans-Regular.ttf"))
-        {
-            window.draw(text);
-        }
+        window.draw(text);
         window.display();
     }
 
