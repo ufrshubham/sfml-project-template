@@ -24,7 +24,6 @@ int main()
     sf::Font font;
     if (!font.loadFromFile("resources/OpenSans-Regular.ttf"))
     {
-        
         std::cerr << "Failed to load font. Application will continue without displaying text.\n";
     }
     else
