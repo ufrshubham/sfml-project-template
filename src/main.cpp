@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include <experimental/filesystem>
+#include <filesystem>
 #include "Version.hpp"
 
 static void modifyCurrentWorkingDirectory();
@@ -21,7 +21,7 @@ int main()
     }
 
     sf::Font font;
-    if (!font.loadFromFile("arial.ttf"))
+    if (!font.loadFromFile("resources/OpenSans-Regular.ttf"))
     {
         return EXIT_FAILURE;
     }
@@ -53,9 +53,9 @@ int main()
 }
 void modifyCurrentWorkingDirectory()
 {
-    while (!std::experimental::filesystem::exists("resources")) 
+    while (!std::filesystem::exists("resources")) 
     {
-        std::experimental::filesystem::current_path(std::experimental::filesystem::current_path().parent_path());
+        std::filesystem::current_path(std::experimental::filesystem::current_path().parent_path());
     }
-    auto cwd = std::experimental::filesystem::current_path();
+    auto cwd = std::filesystem::current_path();
 }
