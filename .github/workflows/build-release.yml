@@ -79,7 +79,7 @@ jobs:
           name: sfml-project-linux
           path: ${{ github.workspace }}/build/sfml-project-linux.zip
 
-      release:
+  release:
     name: Release
     needs: build  # Ensure the release job waits for the build to finish
     runs-on: ubuntu-latest
