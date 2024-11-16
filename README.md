@@ -34,7 +34,7 @@ There are two ways to use this project template. You can either create your own 
     git clone --recursive https://github.com/ufrshubham/sfml-project-template.git
     ```
 
-Note: If you've already cloned this repo without using `--recursive` flag, just run `git submodule update --init` to update the submodules.
+**Note:** If you've already cloned this repo without using `--recursive` flag, just run `git submodule update --init` to update the submodules.
 
 ### Code
 
@@ -72,7 +72,52 @@ Note: If you've already cloned this repo without using `--recursive` flag, just 
     cmake --build . --config Release
     ```
 
-- You should find the executables under `build/bin`
+- The executables will be available in build/bin.
+
+### GitHub Workflow (Build and Release)
+
+This project includes an automated GitHub Actions workflow for building and releasing your application across multiple platforms (Windows, macOS, and Linux).
+
+#### Build Trigger
+
+- To trigger the build workflow, push a version tag to the repository (e.g., v1.0.0), after pushing your recent code changes.
+
+    ```bash
+    git tag v1.0.0
+    git push origin v1.0.0
+    ```
+
+    **Note:** The build workflow will not run again if the same tag is pushed multiple times. To retrigger the workflow, you must delete the existing tag locally and on the remote, then recreate and push it.
+
+    ```bash
+    git tag -d v1.0.0
+    git push origin --delete v1.0.0
+
+    git tag v1.0.0
+    git push origin v1.0.0
+    ```
+
+#### Release Trigger
+
+- To publish a release, go to the Releases tab and select either "Create a new release" or "Draft a new release" (depending on whether releases exist).
+
+    ![Create a new release button](readme-assets/create-new-release..png)
+
+    ![Draft a new release button](readme-assets/draft-new-release.png)
+
+- Select a version tag by clicking "Choose a tag".
+
+    ![Choose a tag option](readme-assets/choose-tag.png)
+
+    **Note:** Ensure the tag is created and pushed beforehand.. 
+
+- Click "Publish release".
+
+    ![Publish release button](readme-assets/publish-release.png)
+
+    (This action will trigger the build workflow again, once it is completed, the release workflow will begin. Upon successful completion, the build files for all platforms along with the source code will be uploaded.)
+
+    ![Published releases](readme-assets/published-releases.png)
 
 ## License
 
