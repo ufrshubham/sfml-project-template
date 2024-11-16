@@ -1,0 +1,138 @@
+name: Build and Release
+
+on: 
+  push:
+    tags:
+      - 'v*'  # Trigger only on version tags, e.g., v1.0.0
+  release:
+    types: [published]  # Trigger on published releases
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    name: Build
+    timeout-minutes: 90
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Create Build Environment
+        run: cmake -E make_directory ${{github.workspace}}/build
+
+      - name: Get dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt update && sudo apt install -y libudev-dev libopenal-dev libvorbis-dev libflac-dev libxrandr-dev libfreetype6-dev make libgl1-mesa-dev libxcursor-dev
+
+      - name: Configure CMake
+        shell: bash
+        working-directory: ${{github.workspace}}/build
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+
+      - name: Build
+        working-directory: ${{github.workspace}}/build
+        shell: bash
+        run: cmake --build . --config $BUILD_TYPE
+
+      - name: Package Build (Windows)
+        if: matrix.os == 'windows-latest'
+        run: 7z a ${{ github.workspace }}/build/sfml-project-windows.zip bin\*
+        working-directory: ${{ github.workspace }}/build
+
+      - name: Package Build (macOS)
+        if: matrix.os == 'macos-latest'
+        run: zip -r ${{ github.workspace }}/build/sfml-project-macos.zip bin/*
+        working-directory: ${{ github.workspace }}/build
+
+      - name: Package Build (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: zip -r ${{ github.workspace }}/build/sfml-project-linux.zip bin/*
+        working-directory: ${{ github.workspace }}/build
+
+      # Upload artifacts to be used by the release job
+      - name: Upload Windows Build
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: sfml-project-windows
+          path: ${{ github.workspace }}/build/sfml-project-windows.zip
+
+      - name: Upload macOS Build
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: sfml-project-macos
+          path: ${{ github.workspace }}/build/sfml-project-macos.zip
+
+      - name: Upload Linux Build
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: sfml-project-linux
+          path: ${{ github.workspace }}/build/sfml-project-linux.zip
+
+  release:
+    name: Release
+    needs: build  # Ensure the release job waits for the build to finish
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' # Only run if the event is - release
+          
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Windows Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: sfml-project-windows
+          path: ./build
+
+      - name: Download macOS Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: sfml-project-macos
+          path: ./build
+
+      - name: Download Linux Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: sfml-project-linux
+          path: ./build
+
+      - name: Upload Windows Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./build/sfml-project-windows.zip
+          asset_name: sfml-project-windows.zip
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload macOS Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./build/sfml-project-macos.zip
+          asset_name: sfml-project-macos.zip
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Linux Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./build/sfml-project-linux.zip
+          asset_name: sfml-project-linux.zip
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
